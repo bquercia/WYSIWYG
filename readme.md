@@ -8,3 +8,11 @@ Pour ce faire, il faudra analyser la structure d'un document, et déterminer que
 Dans un second temps, est envisagée l'intégration de ce module au sein du logiciel OpenFlexo.
 
 Ce projet fera l'objet d'un rapport technique dont le format reste encore à déterminer.
+
+TODO :
+ - écrire une petite interface permettant d'écrire du texte et de générer / charger un docx
+ - essayer avec du formatage basique
+ - étudier la partie chargement / sauvegarde
+ - faire attention à ne pas créer de dépendances inutiles, etc (penser à l'intégration)
+ - chercher un équivalent de docx4all pour odt et se renseigner sur la structure du document
+ - vérifier la faisabilité du document générique
