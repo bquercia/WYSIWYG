@@ -11,8 +11,13 @@ Ce projet fera l'objet d'un rapport technique dont le format reste encore à dé
 
 TODO :
  - écrire une petite interface permettant d'écrire du texte et de générer / charger un docx
+ **écrire du texte partiellement fait, générer un docx fait**
  - essayer avec du formatage basique
+ **done**
  - étudier la partie chargement / sauvegarde
+ **en cours**
  - faire attention à ne pas créer de dépendances inutiles, etc (penser à l'intégration)
+ **Pour le moment, uniquement Swing et docx4j**
  - chercher un équivalent de docx4all pour odt et se renseigner sur la structure du document
+ **en cours**
  - vérifier la faisabilité du document générique
