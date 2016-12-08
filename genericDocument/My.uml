@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_7rbxcL1XEeasNPzV0CCseg">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_RlgcEL1YEeasNPzV0CCseg">
+    <nestedClassifier xmi:type="uml:Class" xmi:id="_dquhcL1YEeasNPzV0CCseg"/>
+  </packagedElement>
+</uml:Model>
