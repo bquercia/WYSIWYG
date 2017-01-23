@@ -1,5 +1,7 @@
 package styles;
 
+import java.util.Iterator;
+
 /**
  * This abstract class is what gathers different properties applicable to an element.
  * @author Bruno Quercia
@@ -67,5 +69,39 @@ public abstract class Style {
 	public boolean addProperties(PropertySet p){
 		return this.properties.addAll(p);
 	}
-
+	
+	/**
+	 * Sets the parent of the Style.
+	 * All properties are discarded, the Style becomes identical to its parent.
+	 * @param p the new parent.
+	 */
+	public void setParent(Style p){
+		this.parentStyle = p;
+		this.properties = p.getProperties();
+	}
+	
+	/**
+	 * Returns the parent element of the Style, null if it has none.
+	 * @return
+	 */
+	public Style getParent(){
+		return this.parentStyle;
+	}
+	
+	/**
+	 * Removes a property from the Style.
+	 * @param label name of the property.
+	 * @param value value of the property.
+	 */
+	public void removeProperty(String label, String value){
+		Iterator<Property> i = this.properties.iterator();
+		boolean propertyFound = false;
+		while(i.hasNext() && !propertyFound){
+			Property p = i.next();
+			if(p.getLabel() == label && p.getValue() == value){
+				propertyFound = true;
+				this.properties.remove(p);
+			}
+		}
+	}
 }

@@ -24,7 +24,7 @@ public class Property {
 		this.label = label;
 		this.value = value;
 		this.possibleValues = possibleValues;
-		this.possibleValues.add(value);
+		//this.possibleValues.add(value);
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public class Property {
 	 * Adds a new value the property can be set to
 	 * @param v new possible value
 	 */
-	public void adPossibleValue(String v){
+	public void addPossibleValue(String v){
 		this.possibleValues.add(v);
 	}
 	
@@ -78,6 +78,23 @@ public class Property {
 	 */
 	public String getLabel(){
 		return this.label;
+	}
+	
+	public boolean hasPossibleValues(){
+		return !(possibleValues.isEmpty());
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		boolean result = this.label.equals(((Property)o).getLabel());
+		if(hasPossibleValues()){
+			System.out.println("Property " + this.getLabel() + " has possible values");
+			System.out.println(this.possibleValues);
+			result = result && this.value == ((Property)o).getValue();
+		}
+		System.out.println("Propriété source : " + this.label);
+		System.out.println("Propriété cible : " + ((Property)o).label);
+		return result;
 	}
 
 }

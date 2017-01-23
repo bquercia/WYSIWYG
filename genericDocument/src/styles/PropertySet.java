@@ -35,5 +35,4 @@ public class PropertySet extends HashSet<Property> {
 		}
 		return result;
 	}
-
 }
