@@ -5,12 +5,16 @@ package util;
 
 import java.util.LinkedList;
 
+import content.Cell;
 import content.Document;
 import content.Element;
+import content.ImgRun;
 import content.Paragraph;
+import content.Row;
 import content.Run;
 import content.TextRun;
 import styles.Property;
+import content.Table;
 
 /**
  * @author Bruno Quercia
@@ -41,6 +45,26 @@ public class Translator {
 				}
 				result += "</p>";
 			}
+			else if(e.getClass() == Table.class){
+				Table table = (Table)e;
+				result += "<table style='border-spacing: -0px;'>";
+				for(Row r: table.getRows()){
+					result += "<tr>";
+					for(Cell c: r.getOwnCells()){
+						result +="<td style='border:1px solid black;' colspan='" + c.getColSpan() + "' rowspan='" + c.getRowSpan() + "'>";
+						for(Paragraph p: c.getParagraphs()){
+							result += "<p>";
+							for(Run run: p.getRuns()){
+								result += this.generateHTML(run);
+							}
+							result += "</p>";
+						}
+						result +="</td>";
+					}
+					result += "</tr>";
+				}
+				result += "</table>";
+			}
 		}
 		return result;
 	}
@@ -50,7 +74,12 @@ public class Translator {
 		String after = "";
 		String content = "";
 		for(Property p: r.getStyle().getProperties()){
-			if(rules.contains(new Rule(p, "", ""))){
+			if(!p.hasPossibleValues()){
+				Rule rule = new Rule(p);
+				before += rule.getBefore();
+				after = rule.getAfter() + after;
+			}
+			else if(rules.contains(new Rule(p, "", ""))){
 				Rule rule = rules.get(rules.indexOf(new Rule(p, "", "")));
 				before += rule.getBefore();
 				after = rule.getAfter() + after;
@@ -59,6 +88,9 @@ public class Translator {
 		}
 		if(r.getClass() == TextRun.class){
 			content = ((TextRun)r).getText();
+		}
+		else if(r.getClass() == ImgRun.class){
+			content = "<img src='" + ((ImgRun)r).getImg() + "'/>";
 		}
 		return before + content + after;
 		

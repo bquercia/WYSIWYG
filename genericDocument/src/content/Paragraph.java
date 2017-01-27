@@ -64,5 +64,9 @@ public class Paragraph extends Element {
 	public boolean addRun(Run r){
 		return this.runs.add(r);
 	}
+	
+	public void insertRunAfter(Run newRun, Run previousRun){
+		this.runs.add(this.runs.indexOf(previousRun) + 1, newRun);
+	}
 
 }

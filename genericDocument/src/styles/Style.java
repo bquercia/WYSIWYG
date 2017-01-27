@@ -38,8 +38,13 @@ public abstract class Style {
 	 */
 	public Style(PropertySet properties, Style parentStyle) {
 		this.parentStyle = parentStyle;
-		this.properties = parentStyle.getProperties();
+		this.properties.addAll(parentStyle.getProperties());
 		this.properties.addAll(properties);
+	}
+	
+	public Style(Style s){
+		this.parentStyle = s.parentStyle;
+		this.properties = s.properties;
 	}
 	
 	/**
@@ -77,7 +82,7 @@ public abstract class Style {
 	 */
 	public void setParent(Style p){
 		this.parentStyle = p;
-		this.properties = p.getProperties();
+		this.properties.addAll(p.getProperties());
 	}
 	
 	/**

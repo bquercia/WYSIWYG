@@ -1,5 +1,7 @@
 package content;
 
+import styles.InlineStyle;
+import styles.Property;
 import styles.Style;
 
 /**
@@ -21,7 +23,7 @@ public abstract class Run {
 	 * Creates a run with no specific style. Its style will be default.
 	 */
 	public Run(){
-		this.style = null;
+		this.style = new InlineStyle();
 	}
 	
 	/**
@@ -39,6 +41,10 @@ public abstract class Run {
 	 */
 	public void setStyle(Style s){
 		this.style = s;
+	}
+	
+	public boolean addProperty(Property p){
+		return this.style.addProperty(p);
 	}
 
 }

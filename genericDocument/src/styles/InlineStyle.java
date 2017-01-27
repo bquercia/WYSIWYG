@@ -32,5 +32,9 @@ public class InlineStyle extends Style {
 		super(properties, parentStyle);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public InlineStyle(InlineStyle s){
+		super(s);
+	}
 
 }
