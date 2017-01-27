@@ -78,46 +78,20 @@ public class Document {
 			if(e.getClass() == Paragraph.class){
 				System.out.println("L'élément est un paragraphe");
 				Paragraph p = (Paragraph)e;
-				ListIterator<Run> i = (ListIterator) p.getRuns().iterator();
-				while(i.hasNext()){
-					Run r = i.next();
-					//TextRuns - ImgRuns will be handled later
-					System.out.println("Examen d'un run");
-					if(r.getClass() == TextRun.class){
-						System.out.println("Le run est un TextRun");
-						TextRun tr = (TextRun)r;
-						//Let's check if the offset is within this run.
-						int l = tr.getText().length();
-						currentPosition += l;
-						System.out.println("Position courante : " + currentPosition + ", position recherchée : " + offset);
-						//If it is, this is our guy
-						if(currentPosition >= offset){
-							System.out.println("La position a été trouvée");
-							//Insertion position within the text
-							int insertionPosition = l - currentPosition + offset;
-							//Let's split the text around this position
-							String start = tr.getText().substring(0, insertionPosition);
-							String end = tr.getText().substring(insertionPosition);
-							//And then let's recompose it with the inserted text.
-							tr.setText(start + text + end);
-							System.out.println(tr.getText());
-							break;
-						}
-						//If not, let's look at the next run.
-					}
-					else
-					{
-						//This is an ImgRun. Its length is 1.
-						currentPosition++;
-						if(currentPosition >= offset){
-							TextRun run = new TextRun();
-							run.setText(text);
-							i.add(run);
+				currentPosition = insertIntoParagraph(p, offset, currentPosition, text);
+				if(currentPosition == -1)
+					break;
+			}
+			else if(e.getClass() == Table.class){
+				for(Row r: ((Table)e).getRows()){
+					for(Cell c: r.getOwnCells()){
+						for(Paragraph p: c.getParagraphs()){
+							currentPosition = insertIntoParagraph(p, offset, currentPosition, text);
+							if(currentPosition == -1)
+								break;
 						}
 					}
 				}
-				//End of paragraph = \n, thus one more character
-				currentPosition ++;
 			}
 		}
 		for(DocumentListener l: listeners){
@@ -126,9 +100,61 @@ public class Document {
 	}
 	
 	/**
+	 * Submethod of insert, avoids repetition of code.
+	 * It is used to locate the paragraph and insert the text in it.
+	 * @param p paragraph to be examined
+	 * @param offset same as insert
+	 * @param currentPosition current position of the search process
+	 * @param text same as insert
+	 * @return the new value of currentPosition, or -1 if insertion has been achieved.
+	 */
+	private int insertIntoParagraph(Paragraph p, int offset, int currentPosition, String text){
+		ListIterator<Run> i = (ListIterator) p.getRuns().iterator();
+		while(i.hasNext()){
+			Run r = i.next();
+			System.out.println("Examen d'un run");
+			if(r.getClass() == TextRun.class){
+				System.out.println("Le run est un TextRun");
+				TextRun tr = (TextRun)r;
+				//Let's check if the offset is within this run.
+				int l = tr.getText().length();
+				currentPosition += l;
+				System.out.println("Position courante : " + currentPosition + ", position recherchée : " + offset);
+				//If it is, this is our guy
+				if(currentPosition >= offset){
+					System.out.println("La position a été trouvée");
+					//Insertion position within the text
+					int insertionPosition = l - currentPosition + offset;
+					//Let's split the text around this position
+					String start = tr.getText().substring(0, insertionPosition);
+					String end = tr.getText().substring(insertionPosition);
+					//And then let's recompose it with the inserted text.
+					tr.setText(start + text + end);
+					System.out.println(tr.getText());
+					return -1;
+				}
+				//If not, let's look at the next run.
+			}
+			else
+			{
+				//This is an ImgRun. Its length is 1.
+				currentPosition++;
+				if(currentPosition >= offset){
+					TextRun run = new TextRun();
+					run.setText(text);
+					i.add(run);
+				}
+			}
+		}
+		//End of paragraph = \n, thus one more character
+		currentPosition ++;
+		return currentPosition;
+	}
+	
+	/**
 	 * Adds a listener to the document
 	 * @param listener a DocumentListener
-	 * @return
+	 * @return success
 	 */
 	public boolean addListener(DocumentListener listener){
 		return listeners.add(listener);

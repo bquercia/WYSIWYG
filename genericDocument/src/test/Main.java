@@ -55,11 +55,11 @@ public class Main {
 		JFrame monitor = new JFrame();
 		Translator translator = new Translator();
 		EditorPanel panel = new EditorPanel(translator);
-		JScrollPane monitorPanel = new JScrollPane();
 		JButton button = new JButton();
 		Editor editor = panel.getEditor();
 		JEditorPane monitorEditor = new JEditorPane("text/html", "");
 		monitorEditor.setEditable(false);
+		JScrollPane monitorPanel = new JScrollPane(monitorEditor);
 		Document document = editor.getDocumentModel();
 		
 		//Graphics
@@ -68,9 +68,7 @@ public class Main {
 		button.setText("B");*/
 		window.setContentPane(panel);
 		window.setSize(500, 650);
-		monitorEditor.setSize(500, 650);
-		monitorPanel.add(monitorEditor);
-		//monitorPanel.setLayout(new ScrollPaneLayout());
+		monitorEditor.setSize(400, 2000);
 		monitor.setContentPane(monitorPanel);
 		monitor.setSize(500, 650);
 		

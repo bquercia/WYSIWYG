@@ -43,6 +43,11 @@ public abstract class Run {
 		this.style = s;
 	}
 	
+	/**
+	 * Adds a new property to the style.
+	 * @param p property to be added
+	 * @return success
+	 */
 	public boolean addProperty(Property p){
 		return this.style.addProperty(p);
 	}

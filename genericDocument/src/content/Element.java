@@ -13,7 +13,7 @@ import util.Translator;
 public abstract class Element {
 
 	/**
-	 * 
+	 * Creates an Element.
 	 */
 	public Element() {
 		// TODO Auto-generated constructor stub

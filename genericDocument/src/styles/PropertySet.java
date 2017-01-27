@@ -20,8 +20,14 @@ public class PropertySet extends HashSet<Property> {
 		while(i.hasNext() && !valueChanged){
 			Property p = i.next();
 			if(p.getLabel().equals(e.getLabel())){
-				this.remove(p);
-				System.out.println("Une propriété a été remplacée");
+				try {
+					p.setValue(e.getValue());
+					System.out.println("Une propriété a été remplacée");
+					return true;
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			else System.out.println("Labels différents : source " + p.getLabel() + ", cible " + e.getLabel());
 		}

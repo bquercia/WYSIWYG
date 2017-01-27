@@ -8,6 +8,8 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 /**
+ * A row is a container of cells. It is part of a table.
+ * A row should not be created outside its parent table. If it were, it would be ignored.
  * @author Bruno Quercia
  *
  */
@@ -16,13 +18,19 @@ public class Row {
 	private Table table;
 	private int length;
 	/**
-	 * 
+	 * Creates a new row with a parent table
+	 * @param table the parent
 	 */
 	public Row(Table table) {
 		cells = new LinkedList<Cell>();
 		this.table = table;
 	}
 	
+	/**
+	 * Creates a new row with a parent table and a given number of cells
+	 * @param table the parent
+	 * @param nbCells the number of cells
+	 */
 	public Row(Table table, int nbCells) {
 		cells = new LinkedList<Cell>();
 		for(int i = 0 ; i < nbCells ; i++){
@@ -31,6 +39,11 @@ public class Row {
 		this.table = table;
 	}
 	
+	/**
+	 * Adds a cell at a given position in the row.
+	 * If this operation makes the row bigger than the other ones of its table, then all others will append cells to compensate.
+	 * @param position the position of the new cell within the row
+	 */
 	public void addCell(int position){
 		Cell c = this.findPosition(position);
 		Cell newCell = new Cell(this);
@@ -41,6 +54,12 @@ public class Row {
 		table.addColumn(position, cells.size());
 	}
 	
+	/**
+	 * Fetches the cell that starts at a given position
+	 * or the first to start after this position if no cell starts there.
+	 * @param position the position of the cell within the line
+	 * @return
+	 */
 	public Cell findPosition(int position){
 		int currentPosition = 0;
 		System.out.println("Je recherche la position" + position);
@@ -53,6 +72,10 @@ public class Row {
 		return null;
 	}
 	
+	/**
+	 * 
+	 * @return the spatial size of the row.
+	 */
 	public int getSize(){
 		int currentSize = 0;
 		for(Cell c: cells){
@@ -61,14 +84,27 @@ public class Row {
 		return currentSize;
 	}
 	
+	/**
+	 * 
+	 * @return the next row in the table, or null if it is last.
+	 */
 	public Row getSuccessor(){
 		return table.getNextRow(this);
 	}
 	
+	/**
+	 * 
+	 * @return all the cells that occupy this row
+	 */
 	public LinkedList<Cell> getCells(){
 		return this.cells;
 	}
 	
+	/**
+	 * 
+	 * @param cell the cell we want to know the position of
+	 * @return the spatial position of the cell
+	 */
 	public int getPosition(Cell cell){
 		int currentPosition = 0;
 		for(Cell c: cells){
@@ -79,6 +115,11 @@ public class Row {
 		return -1;
 	}
 	
+	/**
+	 * This function should only be called by a cell
+	 * Its purpose is to make the necessary changes after a cell has increased rowspan
+	 * @param cell the cell that has changed
+	 */
 	protected void addCellByRowSpanFusion(Cell cell){
 		//Let's see if the cell can pretend to join us
 		//If its start is closer to us than its rowspan, yes.
@@ -119,6 +160,11 @@ public class Row {
 		}
 	}
 	
+	/**
+	 * This function should only be called by a cell.
+	 * Its purpose is to make the necessary changes after a cell has been divided in two horizontally.
+	 * @param cell the cell that was split
+	 */
 	protected void changeCellByHorizontalSplit(Cell cell){
 		//A cell tells us it has shortened and no longer reaches down to us
 		//Let's first check that
@@ -159,18 +205,35 @@ public class Row {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param cell the cell we want to find
+	 * @return true if and only if the cell occupies this row
+	 */
 	public boolean contains(Cell cell){
 		return cells.contains(cell);
 	}
 	
+	/**
+	 * 
+	 * @return the index within the table
+	 */
 	protected int getNumber(){
 		return this.table.getRowNumber(this);
 	}
 	
+	/**
+	 * 
+	 * @return the previous row within the table, or null if first row
+	 */
 	public Row getPredecessor(){
 		return this.table.getPreviousRow(this);
 	}
 	
+	/**
+	 * 
+	 * @return the cells that start at this row (not the cells that occupy it)
+	 */
 	public LinkedList<Cell> getOwnCells(){
 		LinkedList<Cell> l = new LinkedList<Cell>();
 		for(Cell c: cells){
