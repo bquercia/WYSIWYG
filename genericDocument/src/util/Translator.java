@@ -74,6 +74,7 @@ public class Translator {
 		String after = "";
 		String content = "";
 		for(Property p: r.getStyle().getProperties()){
+			System.out.println("Propriété : " + p.getLabel() + " : " + p.getValue());
 			if(!p.hasPossibleValues()){
 				Rule rule = new Rule(p);
 				before += rule.getBefore();

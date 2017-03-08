@@ -106,7 +106,7 @@ public class Row {
 	 * @return the spatial position of the cell
 	 */
 	public int getPosition(Cell cell){
-		int currentPosition = 0;
+		int currentPosition = 1;
 		for(Cell c: cells){
 			if(c == cell)
 				return currentPosition;
@@ -147,7 +147,7 @@ public class Row {
 							i.remove();
 							i.add(cell);
 						}
-						//If it is in the zone but not at the start popsition
+						//If it is in the zone but not at the start position
 						//we simply remove it
 						else if(currentPosition > start && currentPosition < end){
 							i.remove();
@@ -201,6 +201,55 @@ public class Row {
 				cells.remove(cell);
 				cells.add(index, r.findPosition(position));
 				//And we're done!
+			}
+		}
+	}
+	
+	protected void removeCellsByColSpanFusion(Cell cell, int size){
+		//A cell tells us it has become wider and we should remove its right-hand neighbours
+		//in order to make room for it.
+		//First, let's check that.
+		//Either we have a single row, and it does whatever it wants
+		System.out.println("Une cellule dit avoir grossi de " + size);
+		int startPosition = this.getPosition(cell) + cell.getColSpan();
+		if(table.getRows().size() == 1){
+			System.out.println("Je n'ai qu'une seule ligne.");
+			//In this case we must just check that the size is correct
+			int actualEndPosition = this.getPosition(this.findPosition(startPosition));
+			if(actualEndPosition == startPosition || this.getSize() == startPosition + size){
+				//Let's delete!
+				ListIterator<Cell> i = (ListIterator<Cell>) cells.iterator();
+				//Let's go through all the cells and find the ones to delete
+				while(i.hasNext()){
+					Cell c = i.next();
+					int pos = this.getPosition(c);
+					if(pos >= startPosition && pos < actualEndPosition)
+						i.remove();
+				}
+			}
+		}
+		//Or we have multiple rows, in which case we compare our row to its neighbour
+		else{
+			System.out.println("J'ai plusieurs lignes");
+			Row r = cell.getRow();
+			if((r.getPredecessor() != null && r.getSize() == r.getPredecessor().getSize() + size)
+				|| r.getSize() == r.getSuccessor().getSize() + size){
+				System.out.println("Je peux détruire.");
+				//Let's delete!
+				ListIterator<Cell> i = (ListIterator<Cell>) cells.iterator();
+				//Let's go through all the cells and find the ones to delete
+				int sizeRemoved = 0;
+				while(i.hasNext()){
+					Cell c = i.next();
+					int pos = this.getPosition(c);
+					System.out.println("Position actuelle : " + pos);
+					System.out.println("Position de départ : " + startPosition);
+					System.out.println("Position d'arrivée : " + (startPosition + cell.getColSpan()));
+					if(pos >= startPosition && pos < startPosition + size - sizeRemoved){
+						sizeRemoved += c.getColSpan();
+						i.remove();
+					}
+				}
 			}
 		}
 	}

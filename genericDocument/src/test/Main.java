@@ -3,6 +3,7 @@
  */
 package test;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -72,6 +74,10 @@ public class Main {
 		monitor.setContentPane(monitorPanel);
 		monitor.setSize(500, 650);
 		
+		//demo or not demo
+		boolean demo = true;
+		//demo = false;
+		
 		//Creating the document
 		TextRun run = new TextRun(new InlineStyle(), "Premier run");
 		HashSet<String> s = new HashSet<String>();
@@ -80,7 +86,7 @@ public class Main {
 		Property p = new Property("font-weight", "bold", s);
 		run.getStyle().addProperty(p);
 		Paragraph para = new Paragraph();
-		para.addRun(run);
+			para.addRun(run);
 		document.addElement(para);
 		//TABLE!!!
 		Paragraph p11 = new Paragraph("(1, 1)");
@@ -96,8 +102,12 @@ public class Main {
 		table.getCell(1, 0).addParagraph(p21);
 		table.getCell(1, 1).addParagraph(p22);
 		table.getCell(1, 2).addParagraph(p23);
-		table.getCell(0,  0).incRowSpan(1);
-		document.addElement(table);
+		table.getCell(0, 0).incRowSpan(1);
+		table.getCell(0, 1).incColSpan(1);
+		Table bigTable = new Table(10, 10);
+		
+		bigTable.mergeCells(2, 3, 6, 7);
+		document.addElement(bigTable);
 		
 		//Creating the translator
 		Rule r = new Rule(p, "<span style='font-weight:bold'>", "</span>");
@@ -107,15 +117,19 @@ public class Main {
 		translator.addRule(r);
 		run = new TextRun(new InlineStyle(), "deuxième run");
 		run.getStyle().addProperty(p);
-		para.addRun(run);
+		if(demo)
+			para.addRun(run);
 			ImgRun ir = new ImgRun("file:///C:\\Users\\bruno_000\\Documents\\projet docx\\genericDocument\\image.jpg");
 			ir.setStyle(new InlineStyle());
-			para.addRun(ir);
-		
+			if(demo)
+				para.addRun(ir);
+			if(demo)
+				document.addElement(table, 3);
 		//Testing the setProperty function
+			if(demo){
 		document.setProperty(new Property("color", "blue",  new HashSet<String>()), 2, 8);
 		document.setProperty(new Property("color", "green", new HashSet<String>()), 9, 17);
-		
+			}
 		//Translating the document
 		String content = translator.generateHTML(document);
 		
@@ -168,7 +182,7 @@ class DocumentMonitor implements DocumentListener{
 							txt += "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 									+ p.getClass().getSimpleName();
 							for(Run run: p.getRuns()){
-								txt += "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + r.getClass().getSimpleName();
+								txt += "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + run.getClass().getSimpleName();
 								if(run.getClass() == TextRun.class){
 									txt += "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
 										+ ((TextRun)run).getText().replace(" ", "&nbsp;")

@@ -48,13 +48,15 @@ public class Editor extends JEditorPane {
 class EditorListener implements DocumentListener{
 	
 	private Editor e;
+	private int docLength;
 	
 	public EditorListener(Editor e){
 		this.e = e;
+		this.docLength = e.getDocument().getLength();
 	}
 	@Override
 	public void changedUpdate(DocumentEvent arg0) {
-		
+		System.out.println("changement");
 	}
 
 	@Override
@@ -69,17 +71,30 @@ class EditorListener implements DocumentListener{
 			String insertedText;
 			try {
 				insertedText = e.getText(offset, length);
-				e.document.insert(insertedText, offset - length);
+				e.document.insert(insertedText, offset - 1);
 			} catch (BadLocationException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
+		this.docLength = e.getDocument().getLength();
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent arg0) {
-		
+		System.out.println(arg0);
+		int offset = arg0.getOffset();
+		int length = arg0.getLength();
+		System.out.println("Une suppression de " + length + "caractères a été effectuée en position " + offset);
+		if(offset != 0){
+			Element body = e.getDocument().getDefaultRootElement()
+					.getElement(1);
+			Element paragraph = body.getElement(0);
+			e.document.delete(offset - 1, length);
+		}
+		this.docLength -= length;
+		System.out.println("Longueur enregistrée : " + docLength);
+		System.out.println("Longueur réelle : " + e.getDocument().getLength());
 	}
 	
 }

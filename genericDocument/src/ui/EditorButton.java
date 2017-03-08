@@ -17,7 +17,7 @@ import styles.Property;
  */
 public class EditorButton extends JButton implements Action {
 
-	private Property property;
+	protected Property property;
 	/**
 	 * 
 	 */
@@ -87,6 +87,10 @@ public class EditorButton extends JButton implements Action {
 	
 	public Property getProperty(){
 		return this.property;
+	}
+	
+	public void setProperty(Property p){
+		this.property = property;
 	}
 
 }

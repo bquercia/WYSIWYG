@@ -20,6 +20,7 @@ public class Paragraph extends Element {
 	 */
 	public Paragraph() {
 		this.runs = new LinkedList<Run>();
+		runs.add(new TextRun());
 	}
 	
 	/**
@@ -63,6 +64,10 @@ public class Paragraph extends Element {
 	 */
 	public boolean addRun(Run r){
 		return this.runs.add(r);
+	}
+	
+	public boolean removeRun(Run r){
+		return this.runs.remove(r);
 	}
 	
 	public void insertRunAfter(Run newRun, Run previousRun){

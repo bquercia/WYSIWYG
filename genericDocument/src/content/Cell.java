@@ -28,6 +28,7 @@ public class Cell {
 		this.colspan = 1;
 		this.row = row;
 		this.paragraphs = new LinkedList<Paragraph>();
+		paragraphs.add(new Paragraph());
 	}
 	
 	/**
@@ -101,9 +102,37 @@ public class Cell {
 		System.out.println("Mon nouveau rowspan est " + this.getRowSpan());
 		r = row;
 		for(int i = 0 ; i < increment ; i++){
-			r.getSuccessor().addCellByRowSpanFusion(this);
+			r = r.getSuccessor();
+			r.addCellByRowSpanFusion(this);
 		}
 		return true;
+	}
+	
+	public boolean incColSpan(int increment){
+		System.out.println("Je veux m'étendre horizontalement de " + increment);
+		//This function is only valid for a simple cell of rowspan 1
+		if(rowspan > 1) return false;
+		//Let's check that a cell starts at this position
+		//(ie that we are not trying to land in the middle of a cell)
+		//For that we first determine where we are going to land
+		//Then we find the cell associated to this position or as close as possible to it
+		//Then we get the actual position of this cell
+		//If the cell is exactly at the right place, then we can carry on.
+		//If not, let's check, this could be the end of the line.
+		int myPosition = row.getPosition(this);
+		System.out.println("ma position : " + myPosition);
+		int endPosition = row.getPosition(row.findPosition(myPosition - 1 + colspan + increment));
+		System.out.println("Taille de la ligne : " + row.getSize());
+		System.out.println("endPosition : " + endPosition);
+		if(endPosition == myPosition + colspan + increment
+		|| row.getSize() == myPosition - 1 + colspan + increment){
+			System.out.println("Je peux");
+			this.colspan += increment;
+			row.removeCellsByColSpanFusion(this, increment);
+			return true;
+		}
+		System.out.println("Je ne peux pas");
+		return false;
 	}
 	
 	/**

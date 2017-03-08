@@ -62,6 +62,72 @@ public class Table extends Element {
 		//à cet endroit. À terminer.
 	}
 	
+	public boolean mergeCells(int startRow, int startCol, int endRow, int endCol){
+
+		for(int i = startRow ; i <= endRow ; i++){
+			Row r = rows.get(i);
+			if(r == null) return false; //Oops... No such row! Something went wrong.
+			
+			boolean foundStart = false;
+			boolean foundEnd = false;
+			for(Cell c: r.getCells()){
+				int start = r.getPosition(c);
+				int end = start + c.getColSpan();
+				
+				//First row? Let's check that no interesting cell starts higher than us.
+				if(i == startRow && start >= startCol && end <= endCol){
+					int upperOverFlow = i - c.getRow().getNumber();
+					if(upperOverFlow > 0) return false;
+				}
+				
+				//Last row? Let's check that no interesting cell ends lower than us.
+				if(i == startRow && start >= startCol && end <= endCol){
+					int lowerOverFlow = c.getRowSpan() + c.getRow().getNumber() - i;
+					if(lowerOverFlow > 1) return false;
+				}
+				
+				//Normal row? Don't care what's inside.
+				
+				//Check that we found a cell that starts at the right place
+				foundStart = foundStart || (start == startCol);
+				//And one that ends at the right place
+				foundEnd = foundEnd || (end == endCol);
+			}
+		
+			//Ok, by now we know that we can merge those cells.
+			//We'll start horizontally by increasing the colspan of our first cell.
+			//But to do that, we will ensure that our action only happens on the first line.
+			//So let's first split every cell in the line
+			r = rows.get(startRow);
+			for(Cell c: r.getCells()){
+				int start = r.getPosition(c);
+				int end = start + c.getColSpan();
+				if(start >= startCol && end <= endCol){
+					c.splitHorizontally(1, c.getRowSpan() - 1);
+				}
+			}
+			
+			//Now the actual extension
+			Cell c = r.findPosition(startCol);
+			int increment = endCol - startCol - c.getColSpan();
+			System.out.println("Je dois augmenter horizontalement de " + increment);
+			c.incColSpan(increment);
+				
+			//Remaining cells have been automatically removed by the row.
+			
+			increment = endRow - startRow;
+			//Now all we need to do is make our cell tall enough.
+			c.incRowSpan(increment);
+		
+			//Remaining cells have been automatically removed by the cells.
+		
+			return true;
+		}
+		
+		return false;
+			 
+	}
+	
 	/**
 	 * Returns the successor of a row
 	 * @param row the original row

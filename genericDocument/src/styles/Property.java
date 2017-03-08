@@ -27,6 +27,16 @@ public class Property {
 		//this.possibleValues.add(value);
 	}
 	
+
+	
+	public Property(Property p) {
+		this.label = new String(p.getLabel());
+		this.value = new String(p.getValue());
+		this.possibleValues = p.getPossibleValues();
+	}
+
+
+
 	/**
 	 * 
 	 * @return the current value of the property.
@@ -41,7 +51,7 @@ public class Property {
 	 * @throws Exception if the value is not in the possible values of the property
 	 */
 	public void setValue(String v) throws Exception {
-		if(possibleValues.contains(v)){
+		if(!this.hasPossibleValues() || possibleValues.contains(v)){
 			this.value = v;
 		}
 		else throw new Exception("Impossible value for this property");

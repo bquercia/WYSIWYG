@@ -6,6 +6,8 @@ package ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import styles.Property;
+
 /**
  * @author Bruno Quercia
  *
@@ -30,7 +32,10 @@ public class EditorButtonListener implements ActionListener {
 		Editor editor = panel.getEditor();
 		int start = editor.getSelectionStart() - 1;
 		int end = editor.getSelectionEnd() - 1;
-		editor.getDocumentModel().setProperty(button.getProperty(), start, end);
+		Property p = button.getProperty();
+		System.out.println("La propriété renvoyée est : "+p.getValue());
+		editor.getDocumentModel().setProperty(p, start, end);
+		System.out.println(panel.getTranslator().generateHTML(editor.getDocumentModel()));
 		editor.setText(panel.getTranslator().generateHTML(editor.getDocumentModel()));
 	}
 
