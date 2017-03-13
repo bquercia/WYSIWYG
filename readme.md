@@ -9,15 +9,21 @@ Dans un second temps, est envisagée l'intégration de ce module au sein du logi
 
 Ce projet fera l'objet d'un rapport technique dont le format reste encore à déterminer.
 
-TODO :
- - écrire une petite interface permettant d'écrire du texte et de générer / charger un docx
- **écrire du texte partiellement fait, générer un docx fait**
- - essayer avec du formatage basique
- **done**
- - étudier la partie chargement / sauvegarde
- **en cours**
- - faire attention à ne pas créer de dépendances inutiles, etc (penser à l'intégration)
- **Pour le moment, uniquement Swing et docx4j**
- - chercher un équivalent de docx4all pour odt et se renseigner sur la structure du document
- **en cours**
- - vérifier la faisabilité du document générique
+# Entités en jeu
+
+Le code s’articule en trois parties : les entités constitutives d’un document génériques, réparties dans les packages content et style ; les parties d’interface utilisateurs, dans le package ui, et un intermédiaire appelé ici Translator, qui fait le lien entre l’interface et le document générique via des règles de traduction. Ces trois entités constituent une architecture MVC. À cela s’ajoute un main de test, dans le package test.
+
+# Documentation
+La Javadoc a été générée et est disponible dans ce repository, rédigée en anglais.
+
+# Difficultés
+
+Plusieurs points sensibles ont nécessité et / ou nécessiteront des ajustements :
+•	Fonctionnalités d’un tableau : pour permettre la souplesse d’utilisation sans autoriser de situation indésirable (cellule qui augmente son colspan sans adapter le reste du tableau par exemple), de nombreuses fonctions auxiliaires ont été utilisées.
+•	Propriétés de style : ce problème n’a pas été résolu. Il apparaît difficile de traduire toutes les propriétés stylistiques, car JEditorPane ne permet pas tout. Il n’est par exemple pas possible de créer un tableau dont les bordures des cellules voisines sont partagées (border-collapse : collapse). À moins de faire du dessin à bas niveau, il faut s’accommoder de solutions proches (border-spacing : 0px).
+•	Création d’une règle à partir d’une propriété : dans la structure d’une propriété a été prévue l’existence de valeurs possibles (par ex pour font-weight : bold, normal), et ce afin de mieux les prendre en charge, et d’éviter des valeurs incongrues.  Ainsi, pour la valeur bold, on créerait un run en gras, alors que pour normal on essaierait au contraire de supprimer des runs… Toutefois, d’autres propriétés pouvant prendre des valeurs arbitraires, on ne peut pas  restreindre la création de règles à une énumération de comportements en fonction des valeurs. Finalement, le code fourni ici ne fait pas grand usage des valeurs possibles.
+
+# Travail ultérieur
+
+La suite de ce projet aura lieu directement sur le repository d’OpenFlexo, et non sur ce repository, afin de faciliter l’intégration.
+
