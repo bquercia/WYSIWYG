@@ -66,10 +66,20 @@ public class Paragraph extends Element {
 		return this.runs.add(r);
 	}
 	
+	/**
+	 * Removes a run from the paragraph
+	 * @param r the run to be removed
+	 * @return success
+	 */
 	public boolean removeRun(Run r){
 		return this.runs.remove(r);
 	}
 	
+	/**
+	 * Inserts a run after another run
+	 * @param newRun the run to be inserted
+	 * @param previousRun the run after which to insert
+	 */
 	public void insertRunAfter(Run newRun, Run previousRun){
 		this.runs.add(this.runs.indexOf(previousRun) + 1, newRun);
 	}

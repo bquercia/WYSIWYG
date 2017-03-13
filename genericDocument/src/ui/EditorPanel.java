@@ -10,7 +10,9 @@ import java.util.HashSet;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.ScrollPaneLayout;
 
 import styles.Property;
 import util.Translator;
@@ -35,19 +37,34 @@ public class EditorPanel extends JPanel {
 		italicButton.setText("I");
 		ColorButton colorButton = new ColorButton(new Property("", "", new HashSet<String>()));
 		colorButton.setText("color");
+		EditorButton centerButton = new EditorButton(new Property("text-align", "center", new HashSet<String>()));
+		centerButton.setText("center");
 		toolBar.add(boldButton);
 		toolBar.add(italicButton);
 		toolBar.add(colorButton);
+		//toolBar.add(centerButton);
 		boldButton.addActionListener(new EditorButtonListener(this, boldButton));
 		italicButton.addActionListener(new EditorButtonListener(this, italicButton));
 		colorButton.addActionListener(new EditorButtonListener(this, colorButton));
+		centerButton.addActionListener(new EditorButtonListener(this, centerButton));
 		AddTableButton addTableButton = new AddTableButton(editor);
-		addTableButton.addActionListener(new AddTableButtonListener(addTableButton, this));
+		addTableButton.addActionListener(new ActionButtonListener(addTableButton, this));
 		addTableButton.setText("table");
+		MergeCellsButton mergeCellsButton = new MergeCellsButton(editor);
+		mergeCellsButton.addActionListener(new ActionButtonListener(mergeCellsButton, this));
+		mergeCellsButton.setText("merge cells");
 		toolBar.add(addTableButton);
+		toolBar.add(mergeCellsButton);
+		FontSizeButton fontSizeButton = new FontSizeButton(new Property("", "", new HashSet<String>()));
+		fontSizeButton.setText("font size");
+		fontSizeButton.addActionListener(new EditorButtonListener(this, fontSizeButton));
+		toolBar.add(fontSizeButton);
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		this.add(toolBar);
-		this.add(editor);
+		JScrollPane scroll = new JScrollPane(editor);
+		scroll.setLayout(new ScrollPaneLayout());
+		this.add(scroll);
+		editor.addKeyListener(new EditorKeyListener(this));
 	}
 	
 	public Editor getEditor(){

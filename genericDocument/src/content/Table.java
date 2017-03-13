@@ -62,6 +62,14 @@ public class Table extends Element {
 		//à cet endroit. À terminer.
 	}
 	
+	/**
+	 * Merges cells within a rectangle 
+	 * @param startRow top of the rectangle
+	 * @param startCol left of the rectangle
+	 * @param endRow bottom of the rectangle
+	 * @param endCol right of the rectangle
+	 * @return success
+	 */
 	public boolean mergeCells(int startRow, int startCol, int endRow, int endCol){
 
 		for(int i = startRow ; i <= endRow ; i++){

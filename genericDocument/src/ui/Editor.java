@@ -5,6 +5,7 @@ package ui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
 
 import javax.swing.JEditorPane;
 import javax.swing.event.DocumentEvent;
@@ -41,6 +42,10 @@ public class Editor extends JEditorPane {
 	
 	public Document getDocumentModel(){
 		return document;
+	}
+	
+	public LinkedList<content.Element> getElements(){
+		return document.getElements(this.getSelectionStart(), this.getSelectionEnd());
 	}
 
 }

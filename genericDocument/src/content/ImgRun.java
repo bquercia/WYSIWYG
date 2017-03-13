@@ -23,7 +23,8 @@ public class ImgRun extends Run {
 	}
 
 	/**
-	 * 
+	 * Creates an ImgRun from a given image url
+	 * @param image the url of the image
 	 */
 	public ImgRun(String image) {
 		// TODO Auto-generated constructor stub

@@ -204,7 +204,13 @@ public class Row {
 			}
 		}
 	}
-	
+	/**
+	 * 
+	 * This function should only be called by a cell.
+	 * Its purpose is to make the necessary changes after a cell has increased its colspan.
+	 * @param cell the cell that has grown
+	 * @param size the growth size
+	 */
 	protected void removeCellsByColSpanFusion(Cell cell, int size){
 		//A cell tells us it has become wider and we should remove its right-hand neighbours
 		//in order to make room for it.
@@ -267,7 +273,7 @@ public class Row {
 	 * 
 	 * @return the index within the table
 	 */
-	protected int getNumber(){
+	public int getNumber(){
 		return this.table.getRowNumber(this);
 	}
 	

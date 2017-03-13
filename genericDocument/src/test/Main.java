@@ -112,7 +112,13 @@ public class Main {
 		//Creating the translator
 		Rule r = new Rule(p, "<span style='font-weight:bold'>", "</span>");
 		translator.addRule(r);
+		p = new Property("font-size", "", new HashSet<String>());
+		r = new Rule(p);
+		translator.addRule(r);
 		p = new Property("color", "red", new HashSet<String>());
+		r = new Rule(p);
+		translator.addRule(r);
+		p = new Property("text-align", "", new HashSet<String>());
 		r = new Rule(p);
 		translator.addRule(r);
 		run = new TextRun(new InlineStyle(), "deuxième run");

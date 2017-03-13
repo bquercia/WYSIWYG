@@ -63,10 +63,21 @@ public class Document {
 		return elements.add(e);
 	}
 	
+	/**
+	 * Adds a paragraph to the document
+	 * @return success
+	 */
 	public boolean createParagraph(){
 		return elements.add(new Paragraph());
 	}
 	
+	/**
+	 * Adds an element at a given position (offset) in the document.
+	 * This will have the effect of splitting the element containing the offset position into two parts,
+	 * one part before the added element, and the other one after it.
+	 * @param element the element to be added
+	 * @param position the adding position
+	 */
 	public void addElement(Element element, int position){
 		int currentPosition = 0;
 		//Let's go through the arborescence to find the runs that we want to change
@@ -98,10 +109,18 @@ public class Document {
 		}
 	}
 	
+	/**
+	 * Creates a paragraph with a given text and adds it to the document
+	 * @param txt text
+	 * @return success
+	 */
 	public boolean createParagraph(String txt){
 		return elements.add(new Paragraph(txt));
 	}
-	
+	/**
+	 * Creates a 3*2 table and adds it to the document
+	 * @return success
+	 */
 	public boolean createTable(){
 		return elements.add(new Table(3, 2));
 	}
@@ -126,8 +145,12 @@ public class Document {
 				System.out.println("L'élément est un paragraphe");
 				Paragraph p = (Paragraph)e;
 				currentPosition = insertIntoParagraph(p, offset, currentPosition, text);
-				if(currentPosition == -1)
+				if(currentPosition == -1){
+					for(DocumentListener l: listeners){
+						l.contentUpdate();
+					}
 					return;
+				}
 			}
 			else if(e.getClass() == Table.class){
 				System.out.println("L'élément est une table");
@@ -136,15 +159,16 @@ public class Document {
 						for(Paragraph p: c.getParagraphs()){
 							System.out.println("Examen d'un paragraphe de la table");
 							currentPosition = insertIntoParagraph(p, offset, currentPosition, text);
-							if(currentPosition == -1)
+							if(currentPosition == -1){
+								for(DocumentListener l: listeners){
+									l.contentUpdate();
+								}
 								return;
+							}
 						}
 					}
 				}
 			}
-		}
-		for(DocumentListener l: listeners){
-			l.contentUpdate();
 		}
 	}
 	
@@ -174,8 +198,12 @@ public class Document {
 				System.out.println("L'élément est un paragraphe");
 				Paragraph p = (Paragraph)e;
 				currentPosition = setPropertyIntoParagraph(start, end, property, currentPosition, p);
-				if(currentPosition == -1 || currentPosition == end)
+				if(currentPosition == -1 || currentPosition >= end){
+					for(DocumentListener l: listeners){
+						l.contentUpdate();
+					}
 					return;
+				}
 				else if(currentPosition >= start){
 					start = currentPosition;
 				}
@@ -186,8 +214,12 @@ public class Document {
 						for(Paragraph p: c.getParagraphs()){
 							System.out.println("Examen d'un paragraphe de la table");
 							currentPosition = setPropertyIntoParagraph(start, end, property, currentPosition, p);
-							if(currentPosition == -1 || currentPosition == end)
+							if(currentPosition == -1 || currentPosition >= end){
+								for(DocumentListener l: listeners){
+									l.contentUpdate();
+								}
 								return;
+							}
 							else if(currentPosition >= start){
 								start = currentPosition;
 							}
@@ -201,6 +233,11 @@ public class Document {
 		}
 	}
 	
+	/**
+	 * Deletes content of a given length starting from a given offset
+	 * @param offset the offset
+	 * @param length the length to delete
+	 */
 	public void delete(int offset, int length){
 		int currentPosition = 0;
 		//Let's go through the arborescence to find the runs that we want to change
@@ -211,8 +248,12 @@ public class Document {
 				System.out.println("L'élément est un paragraphe");
 				Paragraph p = (Paragraph)e;
 				currentPosition = deleteIntoParagraph(currentPosition, offset, length, p);
-				if(currentPosition == -1 || currentPosition == offset + length)
+				if(currentPosition == -1 || currentPosition == offset + length){
+					for(DocumentListener l: listeners){
+						l.contentUpdate();
+					}
 					return;
+				}
 				else if(currentPosition >= offset){
 					length -= currentPosition - offset;
 					offset += currentPosition;
@@ -225,8 +266,12 @@ public class Document {
 					for(Cell c: r.getCells()){
 						for(Paragraph p: c.getParagraphs()){
 							currentPosition = deleteIntoParagraph(currentPosition, offset, length, p);
-							if(currentPosition == -1 || currentPosition == offset + length)
+							if(currentPosition == -1 || currentPosition == offset + length){
+								for(DocumentListener l: listeners){
+									l.contentUpdate();
+								}
 								return;
+							}
 							else if(currentPosition >= offset){
 								length -= currentPosition - offset;
 								offset += currentPosition;
@@ -236,9 +281,75 @@ public class Document {
 				}
 			}
 		}
-		for(DocumentListener l: listeners){
-			l.contentUpdate();
+	}
+	
+	/**
+	 * Finds the main elements between two positions
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public LinkedList<Element> getElements(int start, int end){
+		int currentPosition = 0;
+		LinkedList<Element> result = new LinkedList<Element>();
+		//Let's go through the arborescence to find the runs that we want to change
+		for(Element e: this.getElements()){
+			//Paragraphs - Tables will be handled later
+			System.out.println("Examen d'un élément");
+			currentPosition += length(e);
+			if(currentPosition >= start){
+				result.add(e);
+			}
+			if(currentPosition >= end){
+				return result;
+			}
 		}
+		return result;
+	}
+	
+	/**
+	 * Gives the offset (position) at which an element starts.
+	 * @param e the element
+	 * @return the offset
+	 */
+	public int getStartOffset(Element e){
+		if(elements.contains(e)){
+			int result = 0;
+			//Let's go though the elements until we find the one we are looking for.
+			for(Element elem: elements){
+				if(elem != e){
+					result += length(elem);
+				}
+				else return result;
+			}
+			//We shouldn't need this, but just in case
+			return -1;
+		}
+		else return -1;
+	}
+	
+	/**
+	 * Fetches a cell from a given offset
+	 * @param t the table in which the cell must be retrieved
+	 * @param offset the offset within the editor at which the cell should be located
+	 * @return the cell, null if no cell exists within this table at this position.
+	 */
+	public Cell getCellFromOffset(Table t, int offset){
+		int currentPosition = 0;
+		for(Row r: t.getRows()){
+			System.out.println("Je change de ligne");
+			for(Cell c: r.getOwnCells()){
+				System.out.println("J'étudie une nouvelle cellule : " + c.getRow().getNumber() + ", " + c.getRow().getPosition(c));
+				for(Paragraph p: c.getParagraphs()){
+					currentPosition += length(p);
+				}
+				if(currentPosition >= offset){
+					System.out.println("cellule trouvée");
+					return c;
+				}
+			}
+		}
+		return null;
 	}
 	
 	//Private auxiliary methods
@@ -297,6 +408,15 @@ public class Document {
 		return currentPosition;
 	}
 	
+	/**
+	 * Sets a given property in a given paragraph. Auxiliary function.
+	 * @param start
+	 * @param end
+	 * @param property
+	 * @param currentPosition
+	 * @param p
+	 * @return
+	 */
 	private int setPropertyIntoParagraph(int start, int end, Property property, int currentPosition, Paragraph p){
 		ListIterator<Run> i = (ListIterator) p.getRuns().iterator();
 		while(i.hasNext()){
@@ -387,6 +507,14 @@ public class Document {
 		return currentPosition;
 	}
 	
+	/**
+	 * Deletes content in a given paragraph. Auxiliary function.
+	 * @param currentPosition
+	 * @param offset
+	 * @param length
+	 * @param p
+	 * @return
+	 */
 	private int deleteIntoParagraph(int currentPosition, int offset, int length, Paragraph p){
 		ListIterator<Run> i = (ListIterator) p.getRuns().iterator();
 		while(i.hasNext()){
@@ -449,6 +577,14 @@ public class Document {
 		return currentPosition;
 	}
 
+	/**
+	 * Inserts an element within a paragraph, if appropriate. Auxiliary function.
+	 * @param e
+	 * @param position
+	 * @param currentPosition
+	 * @param p
+	 * @return
+	 */
 	private int insertElementIntoParagraph(Element e, int position, int currentPosition, Paragraph p){
 		System.out.println("insertion d'un élément");
 		ListIterator<Run> i = (ListIterator) p.getRuns().iterator();
@@ -512,5 +648,36 @@ public class Document {
 		//End of paragraph = \n, thus one more character
 			currentPosition ++;
 		return currentPosition;
+	}
+	
+	/**
+	 * Returns the length of a given element
+	 * @param e the element
+	 * @return its length
+	 */
+	private int length(Element e){
+		int result = 1;
+		if(e.getClass() == Paragraph.class){
+			Paragraph p = (Paragraph)e;
+			for(Run r: p.getRuns()){
+				if(r.getClass() == TextRun.class){
+					TextRun tr = (TextRun)r;
+					result += tr.getText().length();
+				}
+				else{
+					result ++;
+				}
+			}
+		}
+		else if(e.getClass() == Table.class){
+			for(Row r: ((Table)e).getRows()){
+				for(Cell c: r.getOwnCells()){
+					for(Paragraph p: c.getParagraphs()){
+						result += length(p);
+					}
+				}
+			}
+		}
+		return result;
 	}
 }

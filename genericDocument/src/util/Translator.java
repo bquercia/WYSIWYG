@@ -88,7 +88,7 @@ public class Translator {
 			else System.out.println("property not found");
 		}
 		if(r.getClass() == TextRun.class){
-			content = ((TextRun)r).getText();
+			content = (((TextRun)r).getText()).replaceAll("\r", "<br/>");
 		}
 		else if(r.getClass() == ImgRun.class){
 			content = "<img src='" + ((ImgRun)r).getImg() + "'/>";

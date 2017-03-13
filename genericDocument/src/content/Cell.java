@@ -108,6 +108,13 @@ public class Cell {
 		return true;
 	}
 	
+	/**
+	 * Increases the colspan of a cell. This will trigger a fusion with overlapping cells.
+	 * The cell will only grow if the structure of the table enables it.
+	 * Otherwise, the operation fails and nothing is done.
+	 * @param increment the increment
+	 * @return success
+	 */
 	public boolean incColSpan(int increment){
 		System.out.println("Je veux m'étendre horizontalement de " + increment);
 		//This function is only valid for a simple cell of rowspan 1
